@@ -6,7 +6,9 @@ import express from "express"
 import dotenv from "dotenv"
 import { createClient } from "redis"
 import randomstring from "randomstring";
+import WebSocket, { WebSocketServer } from 'ws';
 const app = express()
+const httpserver = app.listen(9000)
 dotenv.config()
 
 const PORT = process.env.PORT
@@ -19,8 +21,33 @@ client.on('error',(error)=>{
 })
 
 
+const wss = new WebSocketServer({server:httpserver})
+
+let rooms = {}
+
 
 app.use(express.json())
+
+
+wss.on('connection' , (ws)=>{
+   ws.on('message' , (userValue)=>{
+    console.log('Connected to the server')
+    let message = JSON.parse(userValue);
+    let myMessage = message.msg;
+    let roomid = message.roomid;
+    let myUser = message.user;
+
+    // Join Room
+     
+    if(myMessage === "JOIN"){
+        if(!rooms[roomid]) rooms[roomid] = []
+        rooms[roomid].push(myUser)
+    }
+
+   })
+
+   ws.send("Someone send the message")
+})
 
 app.get("/",(req,res)=>{
     return res.json({msg:"Welcome to the red chat"})
@@ -34,7 +61,7 @@ app.post("/getinqueue" , async(req,res)=>{
         if(!addedUser) res.json({msg:"Added the userId to the queue"})
         
         let allUsers = await client.sMembers("userid")
-        if(allUsers.length>=2){
+        if(allUsers.length==2){
             const user1 = allUsers[0];
             const user2 = allUsers[1];
 
@@ -76,9 +103,7 @@ const serverCreation = async()=>{
     try{
        await client.connect()
        console.log("Successfully connected to the redis")
-       app.listen(PORT , ()=>{
-            console.log(`Server is running on the PORT number ${PORT}`)
-       })
+       console.log(`Server is running on the PORT number ${PORT}`)
     }
     catch(error){
         console.log("Something went wrong while creating the user " + error)
