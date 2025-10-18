@@ -1,4 +1,8 @@
 import Link from "next/link";
+import { Github } from 'lucide-react';
+import { LogIn } from 'lucide-react';
+import { LogOut } from 'lucide-react';
+import { DoorOpen } from 'lucide-react';
 
 export function Navbar(){
     return(
@@ -9,10 +13,10 @@ export function Navbar(){
             <p className="navText text-[40px] font-bold text-white">RedChat</p>
           </div>
 
-          <div className="absolute right-[10%] flex space-x-5">
-           <Link className="text-[20px] text-white font-bold" href={"/"}>Github</Link>
-           <Link className="text-[20px] text-white font-bold" href={"/"}>Login</Link>
-           <Link className="text-[20px] text-white font-bold" href={"/"}>SignUp</Link>
+          <div className="absolute right-[10%] flex space-x-16">
+           <Link className="text-[20px] text-white font-bold" href={"/"}><Github></Github><span>Github</span></Link>
+           <Link className="text-[20px] text-white font-bold" href={"/"}><LogIn></LogIn><span>Login</span></Link>
+           <Link className="text-[20px] text-white font-bold" href={"/"}><DoorOpen></DoorOpen><span>Signin</span></Link>
           </div>
 
         </div>
