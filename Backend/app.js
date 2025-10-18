@@ -5,6 +5,7 @@
 import express from "express"
 import dotenv from "dotenv"
 import { createClient } from "redis"
+import randomstring from "randomstring";
 const app = express()
 dotenv.config()
 
@@ -18,6 +19,7 @@ client.on('error',(error)=>{
 })
 
 
+
 app.use(express.json())
 
 app.get("/",(req,res)=>{
@@ -29,8 +31,26 @@ app.post("/getinqueue" , async(req,res)=>{
    // Now we are going to add the data in the redis and creating a queue
    try{
         let addedUser = await client.SADD("userid",userId)
-        if(addedUser) res.json({msg:"Added the userId to the queue"})
-        else res.json({msg:"User already exist in the queue"})
+        if(!addedUser) res.json({msg:"Added the userId to the queue"})
+        
+        let allUsers = await client.sMembers("userid")
+        if(allUsers.length>=2){
+            const user1 = allUsers[0];
+            const user2 = allUsers[1];
+
+            // Now remove them from the set
+            await client.SREM("userid", user1, user2);
+
+            // Yep now generate a random string for both
+            const matchId = randomstring.generate(10);
+
+            // Returning the users
+            return res.json({
+                msg: "Users matched!",
+                users: [user1, user2],
+                matchId: matchId
+            });
+        }
    }
    catch(error){
     console.log(`Something went wrong while adding the users to the queue`+ error)
@@ -47,6 +67,9 @@ app.get("/getqueueValues" , async(req,res)=>{
     console.log(`Something went wrong while adding the users to the queue`+ error)
    }
 })
+
+
+
 
 
 const serverCreation = async()=>{
