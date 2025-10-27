@@ -59,7 +59,7 @@ export default function Footer({myref}:any){
             {/* Name of the Website Again */}
 
             <div className="w-full h-auto mt-7 overflow-hidden flex items-center justify-center">
-              <h1 className="font-bold md:text-[120px] sm:text-[100px] text-[50px] text-center mt-10 md:mt-24 bg-gradient-to-b from-neutral-950 to-yellow-200 bg-clip-text text-transparent">BuymeaLatte</h1>
+              <h1 className="font-bold md:text-[120px] sm:text-[100px] text-[50px] text-center mt-10 md:mt-24 bg-gradient-to-b from-neutral-950 to-yellow-200 bg-clip-text text-transparent">RedChat</h1>
             </div>
 
         </div>
