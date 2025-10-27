@@ -6,8 +6,6 @@ export function Landing(){
         <>
         <div className="w-full min-h-screen">
 
-           <Navbar></Navbar>
-
            <ThreeDMarqueeDemoSecond></ThreeDMarqueeDemoSecond>
 
         </div>
