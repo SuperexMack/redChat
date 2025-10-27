@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react";
 import { SpecialText } from "../Components/TextSpecial";
-import { MessageCircleWarning , MessageCircle } from 'lucide-react';
+import { MessageCircleWarning , MessageCircle , Shield, Users, Lock  } from 'lucide-react';
 
 export default function() {
 
@@ -18,36 +18,63 @@ export default function() {
   
   return (
     <>
-      <div className="w-full min-h-screen bg-gradient-to-r from-purple-800 via-purple-900 to-pink-500  flex justify-center items-center">
+      <div className="w-full h-auto p-2 flex justify-center items-center">
        
-       <div className="w-[50%] h-auto p-2  flex flex-col items-center space-y-5">
+       <div className="w-[50%] rounded-3xl h-auto shadow-2xl mt-[40px] flex flex-col items-center space-y-5">
 
+        <div className="w-full h-[200px] p-2 rounded-t-3xl bg-red-600 flex items-center justify-center">
         <SpecialText text="Talk to Strangers"></SpecialText>
+        </div>
 
-        <div className="w-full h-auto p-2">
+        <div className="w-full flex items-center justify-around mt-3">
 
-        <p className="text-center text-[25px] bg-purple-700 rounded-2xl font-mono text-white">
+          <div className="flex flex-col space-y-2">
+            <Shield className="h-[40px] w-[40px] text-red-500"></Shield>
+            <h1 className="font-bold">Safe & Secure</h1>
+          </div>
+
+          <div className="flex flex-col space-y-2">
+          <Users className="h-[40px] w-[40px] text-red-500"></Users>
+          <h1 className="font-bold">Meet Strangers</h1>
+          </div>
+
+          <div className="flex flex-col space-y-2">
+          <Lock className="h-[40px] w-[40px] text-red-500"></Lock>
+          <h1 className="font-bold">Stay Anonymous</h1>
+          </div>
+
+        </div>
+
+        <div className="w-full h-auto p-2 text-center">
+
+        <p className="text-[30px] font-bold mt-5"> Welcome! to Redchat</p>
+
+        <p className="text-center border border-slate-200 p-3 text-[23px] font-medium rounded-2xl mt-[20px]">
           Welcome! to Redchat so this is the platform where
           you can talk to the strangers without knowing 
           their real identity and infact you don't need
           to worry about your own identity.
         </p>
 
-        <div className="flex w-full h-auto p-1 space-x-3 mt-6 items-center justify-center ">
+        <div className="bg-yellow-50 border-2 border-yellow-300 rounded-2xl p-6 flex gap-4 mt-[20px]">
+            <MessageCircleWarning className="w-12 h-12 text-yellow-600 flex-shrink-0" />
+            <div>
+              <h3 className="font-bold text-lg text-gray-800 mb-2">Important Safety Notice</h3>
+              <p className="text-gray-700 text-[20px]">
+                Never share personal information such as your full name, address, phone number, 
+                or financial details with strangers. RedChat is not responsible for any incidents 
+                resulting from sharing personal information.
+              </p>
+            </div>
+          </div>
 
-         <MessageCircleWarning className="h-[30px] text-yellow-500 w-[30px]"></MessageCircleWarning>
-         <p className="text-center">
-          Don't share your personal information
-          to any of the stranger and incase you
-          get trapped in these type of case then 
-          Redchat will not be responsible for that
-         </p>
-
-        </div>
-
-        <div className="w-full flex space-x-4 items-center mt-4 justify-center">
-          <input onClick={donecheck} type="checkbox"></input>
-          <p>Yes i accept all the terms and condition</p>
+        <div className="w-full flex space-x-4 items-center mt-[20px] justify-center">
+          <input className="h-[50px] w-[50px]" onClick={donecheck} type="checkbox"></input>
+          <p className="text-[20px] text-red-600">
+            I understand and accept the terms and conditions. 
+            I will not share personal information and acknowledge 
+            that RedChat is not liable for any misuse of the platform.
+          </p>
         </div>
 
 
@@ -56,10 +83,10 @@ export default function() {
 
         <div className="w-full h-auto p-3 flex items-center justify-center">
 
-        <div onClick={joinRoom} className="space-x-3 w-[70%] flex items-center p-3 justify-center bg-gray-700">
+        <div onClick={joinRoom} className="space-x-3 border-2 border-black w-[70%] flex items-center p-3 justify-center bg-gray-700">
 
           <button className="font-bold text-[20px] rounded-2xl text-white">Start chat!!</button>
-          <MessageCircle></MessageCircle>
+          <MessageCircle className="text-red-500"></MessageCircle>
 
         </div>
          
