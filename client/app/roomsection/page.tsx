@@ -22,7 +22,7 @@ export default function() {
        
        <div className="w-[50%] rounded-3xl h-auto shadow-2xl mt-[40px] flex flex-col items-center space-y-5">
 
-        <div className="w-full h-[200px] p-2 rounded-t-3xl bg-red-600 flex items-center justify-center">
+        <div className="w-full h-[200px] p-2 rounded-t-3xl bg-purple-600 flex items-center justify-center">
         <SpecialText text="Talk to Strangers"></SpecialText>
         </div>
 
@@ -42,14 +42,17 @@ export default function() {
           <Lock className="h-[40px] w-[40px] text-red-500"></Lock>
           <h1 className="font-bold">Stay Anonymous</h1>
           </div>
+          
 
         </div>
+
+        <hr></hr>
 
         <div className="w-full h-auto p-2 text-center">
 
         <p className="text-[30px] font-bold mt-5"> Welcome! to Redchat</p>
 
-        <p className="text-center border border-slate-200 p-3 text-[23px] font-medium rounded-2xl mt-[20px]">
+        <p className="text-center main-landing-text border border-slate-200 p-3 text-[23px] font-medium rounded-2xl mt-[20px]">
           Welcome! to Redchat so this is the platform where
           you can talk to the strangers without knowing 
           their real identity and infact you don't need
