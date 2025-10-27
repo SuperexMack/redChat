@@ -16,8 +16,7 @@ const PORT = process.env.PORT
 const client  = createClient();
 
 client.on('error',(error)=>{
-    console.log(`Something went wrong while creating the user and the error
-        is ${error}`)
+    console.log(`Something went wrong while creating the user and the error is : ${error}`)
 })
 
 
@@ -36,12 +35,14 @@ wss.on('connection' , (ws)=>{
     let myMessage = message.msg;
     let roomid = message.roomid;
     let myUser = message.user;
-
-    // Join Room
      
     if(myMessage === "JOIN"){
         if(!rooms[roomid]) rooms[roomid] = []
         rooms[roomid].push(myUser)
+    }
+
+    else if(myMessage === "SENDMESSAGE"){
+        
     }
 
    })
@@ -55,37 +56,37 @@ app.get("/",(req,res)=>{
 
 app.post("/getinqueue" , async(req,res)=>{
    let {userId} = req.body
-   // Now we are going to add the data in the redis and creating a queue
+
    try{
-        let addedUser = await client.SADD("userid",userId)
-        if(!addedUser) res.json({msg:"Added the userId to the queue"})
-        
-        let allUsers = await client.sMembers("userid")
-        if(allUsers.length==2){
-            const user1 = allUsers[0];
-            const user2 = allUsers[1];
+      let setKey = "set_key";
+      let lKey = "list_key";
 
-            // Now remove them from the set
-            await client.SREM("userid", user1, user2);
+      let setInsertion = await client.sMembers(setKey,userId)
+      
+      if(setInsertion) return res.json({msg:"You are already inside the channel"})
 
-            // Yep now generate a random string for both
-            const matchId = randomstring.generate(10);
+      else{
+        await client.sAdd(setKey,userId)
+        await client.rPush(lKey,userId)
+      }
 
-            // Returning the users
-            return res.json({
-                msg: "Users matched!",
-                users: [user1, user2],
-                matchId: matchId
-            });
-        }
+      let length_of_list = await client.lLen(lKey)
+
+      if(length_of_list>=2){
+        let first_user = await client.lPop(lKey)
+        let second_user = await client.lPop(lKey)
+        await client.sRem(setKey,first_user)
+        await client.sRem(setKey,second_user)
+      }
+
    }
+
    catch(error){
     console.log(`Something went wrong while adding the users to the queue`+ error)
    }
 })
 
 app.get("/getqueueValues" , async(req,res)=>{
-   // Now we are going to get all the userId of the queues
    try{
         let addedUser = await client.SMEMBERS("userid")
         return res.json({users:addedUser})
