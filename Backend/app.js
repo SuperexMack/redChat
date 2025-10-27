@@ -24,6 +24,8 @@ const wss = new WebSocketServer({server:httpserver})
 
 let rooms = {}
 
+let usersMap = new Map()
+
 
 app.use(express.json())
 
@@ -33,16 +35,15 @@ wss.on('connection' , (ws)=>{
     console.log('Connected to the server')
     let message = JSON.parse(userValue);
     let myMessage = message.msg;
-    let roomid = message.roomid;
-    let myUser = message.user;
-     
-    if(myMessage === "JOIN"){
-        if(!rooms[roomid]) rooms[roomid] = []
-        rooms[roomid].push(myUser)
-    }
+    let roomId = message.roomId
 
-    else if(myMessage === "SENDMESSAGE"){
-        
+    if(myMessage === "SENDMESSAGE"){
+        let textData = message.textbyuser
+        if(rooms[roomId]){
+            rooms[roomId].forEach((client)=>{
+              client.send(JSON.stringify({myMessage:myMessage , textData : textData}))
+            })
+        }
     }
 
    })
@@ -61,7 +62,7 @@ app.post("/getinqueue" , async(req,res)=>{
       let setKey = "set_key";
       let lKey = "list_key";
 
-      let setInsertion = await client.sMembers(setKey,userId)
+      let setInsertion = await client.sIsMember(setKey,userId)
       
       if(setInsertion) return res.json({msg:"You are already inside the channel"})
 
@@ -77,14 +78,39 @@ app.post("/getinqueue" , async(req,res)=>{
         let second_user = await client.lPop(lKey)
         await client.sRem(setKey,first_user)
         await client.sRem(setKey,second_user)
+
+        const roomId = randomstring.generate(12)
+
+        rooms[roomId] = [first_user,second_user]
+
+        const ws1 = usersMap.get(first_user)
+        const ws2 = usersMap.get(second_user)
+
+        const payload = {
+            type: "ROOM_CREATED",
+            roomId,
+            peers: [first_user, second_user]
+        }
+
+        if(ws1 && ws1.readyState === WebSocket.OPEN){
+            ws1.send(JSON.stringify(payload))
+        }
+
+        if(ws2 && ws2.readyState === WebSocket.OPEN){
+            ws2.send(JSON.stringify(payload))
+        }
+
+        console.log(`Paired ${first_user} and ${second_user} into room ${roomId}`)
+        return res.json({ msg: "Paired", roomId, users: [first_user, second_user] })
+
       }
-
    }
-
    catch(error){
     console.log(`Something went wrong while adding the users to the queue`+ error)
    }
 })
+
+
 
 app.get("/getqueueValues" , async(req,res)=>{
    try{
