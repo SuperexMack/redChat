@@ -1,11 +1,29 @@
 "use client"
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SpecialText } from "../Components/TextSpecial";
 import { MessageCircleWarning , MessageCircle , Shield, Users, Lock  } from 'lucide-react';
 
 export default function() {
 
   const [checkValue,setCheckValue] = useState(false)
+  const [userId,setUserId] = useState("")
+
+  const socket = useRef<WebSocket|null>(null)
+
+
+  useEffect(()=>{
+    socket.current = new WebSocket("ws://localhost:9000")
+
+    socket.current.onopen = ()=>{
+      alert("Connection is established")
+    }
+
+    socket.current.onmessage = ((onmessage)=>{
+      let value = JSON.parse(onmessage.data)
+      alert("Your room name is " + value.payload.roomId)
+    })
+
+  },[])
 
   const donecheck = ()=>{
     setCheckValue(!checkValue)
@@ -14,7 +32,17 @@ export default function() {
 
   const joinRoom = ()=>{
     if(checkValue == false) alert("Check all the term and condition first")
+    if(socket.current){
+      socket.current.send(JSON.stringify({userId:userId,msg:"JOIN_ROOM"}))
+      alert("Request to join the room is send")
+    }
+    else{
+      alert("Unable to send the request")
+    }
   }
+
+
+  
   
   return (
     <>
@@ -82,6 +110,10 @@ export default function() {
 
 
 
+        </div>
+
+        <div className="w-full h-auto p-2">
+          <input className="border-2 border-black" onChange={(e)=>setUserId(e.target.value)} placeholder="Enter userid"></input>
         </div>
 
         <div className="w-full h-auto p-3 flex items-center justify-center">
