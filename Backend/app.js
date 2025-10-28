@@ -26,39 +26,24 @@ let rooms = {}
 
 let usersMap = new Map()
 
-
 app.use(express.json())
 
 
 wss.on('connection' , (ws)=>{
-   ws.on('message' , (userValue)=>{
+   ws.on('message' , async(userValue)=>{
     console.log('Connected to the server')
     let message = JSON.parse(userValue);
     let myMessage = message.msg;
     let roomId = message.roomId
+    let userId = message.userId
 
-    if(myMessage === "SENDMESSAGE"){
-        let textData = message.textbyuser
-        if(rooms[roomId]){
-            rooms[roomId].forEach((client)=>{
-              client.send(JSON.stringify({myMessage:myMessage , textData : textData}))
-            })
-        }
-    }
 
-   })
 
-   ws.send("Someone send the message")
-})
+    if(myMessage === "JOIN_ROOM"){
 
-app.get("/",(req,res)=>{
-    return res.json({msg:"Welcome to the red chat"})
-})
+      usersMap.set(userId,ws)
 
-app.post("/getinqueue" , async(req,res)=>{
-   let {userId} = req.body
-
-   try{
+      try{
       let setKey = "set_key";
       let lKey = "list_key";
 
@@ -93,23 +78,40 @@ app.post("/getinqueue" , async(req,res)=>{
         }
 
         if(ws1 && ws1.readyState === WebSocket.OPEN){
-            ws1.send(JSON.stringify(payload))
+            ws1.send(JSON.stringify({userId:userId,msg:"JOIN_ROOM",payload}))
         }
 
         if(ws2 && ws2.readyState === WebSocket.OPEN){
-            ws2.send(JSON.stringify(payload))
+            ws2.send(JSON.stringify({userId:userId,msg:"JOIN_ROOM",payload}))
         }
 
         console.log(`Paired ${first_user} and ${second_user} into room ${roomId}`)
-        return res.json({ msg: "Paired", roomId, users: [first_user, second_user] })
 
       }
    }
    catch(error){
     console.log(`Something went wrong while adding the users to the queue`+ error)
    }
+      
+    }
+
+    else if(myMessage === "SENDMESSAGE"){
+        let textData = message.textbyuser
+        if(rooms[roomId]){
+            rooms[roomId].forEach((client)=>{
+              client.send(JSON.stringify({myMessage:myMessage , textData : textData}))
+            })
+        }
+    }
+
+   })
+
+   ws.send("Someone send the message")
 })
 
+app.get("/",(req,res)=>{
+    return res.json({msg:"Welcome to the red chat"})
+})
 
 
 app.get("/getqueueValues" , async(req,res)=>{
@@ -138,4 +140,4 @@ const serverCreation = async()=>{
 }
 
 
-serverCreation()
+serverCreation() 
