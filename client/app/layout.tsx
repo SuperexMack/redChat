@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Navbar } from "./Components/Navbar";
 import Footer from "./Components/Footer";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 
 
@@ -20,9 +21,11 @@ export default function RootLayout({
       <body
         className={`antialiased`}
       >
+      <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_PUBLIC_KEY || ""}>
       <Navbar></Navbar>
         {children}
       <Footer></Footer>
+      </GoogleOAuthProvider>
       </body>
     </html>
   );

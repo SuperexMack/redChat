@@ -82,7 +82,7 @@ export default function() {
 
         <div className="w-full h-auto p-2 text-center">
 
-        <p className="text-[30px] font-bold mt-5"> Welcome! to Redchat</p>
+        <p className="text-[30px] font-bold mt-5"> Welcome to Redchat !</p>
 
         <p className="text-center main-landing-text border border-slate-200 p-3 text-[23px] font-medium rounded-2xl mt-[20px]">
           Welcome! to Redchat so this is the platform where

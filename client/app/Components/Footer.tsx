@@ -7,14 +7,14 @@ export default function Footer({myref}:any){
         <div ref={myref} className="w-full bg-black hover:cursor-pointer h-auto p-3 mt-[300px] z-40 flex flex-col items-center">
             <div className="md:w-[90%] w-full h-[90%] mt-6 flex justify-around md:flex flex-wrap">
 
-               {/* First Box */}
+             
                <div className="w-[500px]  h-full p-7  flex flex-col space-y-5">
-                  <h1 className="text-[30px] font-bold bg-gradient-to-r from-white to-slate-500 bg-clip-text text-transparent">BuymeaLatte</h1>
+                  <h1 className="text-[30px] font-bold bg-gradient-to-r from-white to-slate-500 bg-clip-text text-transparent">RedChat</h1>
 
                   <div className="md:w-[70%] w-full">
 
                   <p className="text-slate-100 ">
-                    MSato San is a browser extension that makes understanding online videos easier and more effective by offering smart features via Ai
+                    RedChat is a browser extension that makes understanding online videos easier and more effective by offering smart features via Ai
                   </p>
 
                   </div>
@@ -26,13 +26,13 @@ export default function Footer({myref}:any){
                   </div>
 
                   <div>
-                    <p className="text-slate-300">&copy; {new Date().getFullYear()} MSato San Ai. all rights reserved</p>
+                    <p className="text-slate-300">&copy; {new Date().getFullYear()} RedChat. all rights reserved</p>
                   </div>
                   
 
                </div>
 
-               {/* Second Box */}
+          
 
                <div className="w-[500px] h-full flex space-x-5">
                       
@@ -56,8 +56,6 @@ export default function Footer({myref}:any){
             </div>
 
            
-            {/* Name of the Website Again */}
-
             <div className="w-full h-auto mt-7 overflow-hidden flex items-center justify-center">
               <h1 className="font-bold md:text-[120px] sm:text-[100px] text-[50px] text-center mt-10 md:mt-24 bg-gradient-to-b from-neutral-950 to-yellow-200 bg-clip-text text-transparent">RedChat</h1>
             </div>
