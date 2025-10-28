@@ -1,143 +1,144 @@
-
 // So This is a open source backend code that's why i am writing comment here
 // Let's Gooooooooooooooooo..............
 
-import express from "express"
-import dotenv from "dotenv"
-import { createClient } from "redis"
+import express from "express";
+import dotenv from "dotenv";
+import { createClient } from "redis";
 import randomstring from "randomstring";
-import WebSocket, { WebSocketServer } from 'ws';
-const app = express()
-const httpserver = app.listen(9000)
-dotenv.config()
+import WebSocket, { WebSocketServer } from "ws";
+const app = express();
+const httpserver = app.listen(9000);
+dotenv.config();
 
-const PORT = process.env.PORT
+const PORT = process.env.PORT;
 
-const client  = createClient();
+const client = createClient();
 
-client.on('error',(error)=>{
-    console.log(`Something went wrong while creating the user and the error is : ${error}`)
-})
+client.on("error", (error) => {
+  console.log(
+    `Something went wrong while creating the user and the error is : ${error}`
+  );
+});
 
+const wss = new WebSocketServer({ server: httpserver });
 
-const wss = new WebSocketServer({server:httpserver})
+let rooms = {};
 
-let rooms = {}
+let usersMap = new Map();
 
-let usersMap = new Map()
+app.use(express.json());
 
-app.use(express.json())
-
-
-wss.on('connection' , (ws)=>{
-   ws.on('message' , async(userValue)=>{
-    console.log('Connected to the server')
+wss.on("connection", (ws) => {
+  ws.on("message", async (userValue) => {
+    console.log("Connected to the server");
     let message = JSON.parse(userValue);
     let myMessage = message.msg;
-    let roomId = message.roomId
-    let userId = message.userId
+    let roomId = message.roomId;
+    let userId = message.userId;
 
+    if (myMessage === "JOIN_ROOM") {
+      usersMap.set(userId, ws);
 
+      try {
+        let setKey = "set_key";
+        let lKey = "list_key";
 
-    if(myMessage === "JOIN_ROOM"){
+        let setInsertion = await client.sIsMember(setKey, userId);
 
-      usersMap.set(userId,ws)
+        if (setInsertion)
+          return res.json({ msg: "You are already inside the channel" });
+        else {
+          await client.sAdd(setKey, userId);
+          await client.rPush(lKey, userId);
+        }
 
-      try{
-      let setKey = "set_key";
-      let lKey = "list_key";
+        let length_of_list = await client.lLen(lKey);
 
-      let setInsertion = await client.sIsMember(setKey,userId)
-      
-      if(setInsertion) return res.json({msg:"You are already inside the channel"})
+        if (length_of_list >= 2) {
+          let first_user = await client.lPop(lKey);
+          let second_user = await client.lPop(lKey);
+          await client.sRem(setKey, first_user);
+          await client.sRem(setKey, second_user);
 
-      else{
-        await client.sAdd(setKey,userId)
-        await client.rPush(lKey,userId)
-      }
+          const roomId = randomstring.generate(12);
 
-      let length_of_list = await client.lLen(lKey)
+          rooms[roomId] = [first_user, second_user];
 
-      if(length_of_list>=2){
-        let first_user = await client.lPop(lKey)
-        let second_user = await client.lPop(lKey)
-        await client.sRem(setKey,first_user)
-        await client.sRem(setKey,second_user)
+          const ws1 = usersMap.get(first_user);
+          const ws2 = usersMap.get(second_user);
 
-        const roomId = randomstring.generate(12)
-
-        rooms[roomId] = [first_user,second_user]
-
-        const ws1 = usersMap.get(first_user)
-        const ws2 = usersMap.get(second_user)
-
-        const payload = {
+          const payload = {
             type: "ROOM_CREATED",
             roomId,
-            peers: [first_user, second_user]
+            peers: [first_user, second_user],
+          };
+
+          if (ws1 && ws1.readyState === WebSocket.OPEN) {
+            ws1.send(
+              JSON.stringify({ userId: userId, msg: "JOIN_ROOM", payload })
+            );
+          }
+
+          if (ws2 && ws2.readyState === WebSocket.OPEN) {
+            ws2.send(
+              JSON.stringify({ userId: userId, msg: "JOIN_ROOM", payload })
+            );
+          }
+
+          console.log(
+            `Paired ${first_user} and ${second_user} into room ${roomId}`
+          );
         }
-
-        if(ws1 && ws1.readyState === WebSocket.OPEN){
-            ws1.send(JSON.stringify({userId:userId,msg:"JOIN_ROOM",payload}))
-        }
-
-        if(ws2 && ws2.readyState === WebSocket.OPEN){
-            ws2.send(JSON.stringify({userId:userId,msg:"JOIN_ROOM",payload}))
-        }
-
-        console.log(`Paired ${first_user} and ${second_user} into room ${roomId}`)
-
+      } catch (error) {
+        console.log(
+          `Something went wrong while adding the users to the queue` + error
+        );
       }
-   }
-   catch(error){
-    console.log(`Something went wrong while adding the users to the queue`+ error)
-   }
-      
+    } 
+    
+    else if (myMessage === "SENDMESSAGE") {
+      let textData = message.textbyuser;
+      console.log("message is " + textData + "by userid " + userId);
+      if (rooms[roomId]) {
+        console.log("aandar to aa gye guru");
+        rooms[roomId].forEach((userIdInRoom) => {
+          const userSocket = usersMap.get(userIdInRoom);
+          if (userSocket && userSocket.readyState === WebSocket.OPEN) {
+            console.log("message is sending")
+            userSocket.send(JSON.stringify({msg: myMessage,roomId,userId,textbyuser: textData,}))
+          }
+        });
+      }
+      return;
     }
+  });
 
-    else if(myMessage === "SENDMESSAGE"){
-        let textData = message.textbyuser
-        if(rooms[roomId]){
-            rooms[roomId].forEach((client)=>{
-              client.send(JSON.stringify({myMessage:myMessage , textData : textData}))
-            })
-        }
-    }
+  ws.send("Someone send the message");
+});
 
-   })
+app.get("/", (req, res) => {
+  return res.json({ msg: "Welcome to the red chat" });
+});
 
-   ws.send("Someone send the message")
-})
+app.get("/getqueueValues", async (req, res) => {
+  try {
+    let addedUser = await client.SMEMBERS("userid");
+    return res.json({ users: addedUser });
+  } catch (error) {
+    console.log(
+      `Something went wrong while adding the users to the queue` + error
+    );
+  }
+});
 
-app.get("/",(req,res)=>{
-    return res.json({msg:"Welcome to the red chat"})
-})
+const serverCreation = async () => {
+  try {
+    await client.connect();
+    console.log("Successfully connected to the redis");
+    console.log(`Server is running on the PORT number ${PORT}`);
+  } catch (error) {
+    console.log("Something went wrong while creating the user " + error);
+  }
+};
 
-
-app.get("/getqueueValues" , async(req,res)=>{
-   try{
-        let addedUser = await client.SMEMBERS("userid")
-        return res.json({users:addedUser})
-   }
-   catch(error){
-    console.log(`Something went wrong while adding the users to the queue`+ error)
-   }
-})
-
-
-
-
-
-const serverCreation = async()=>{
-    try{
-       await client.connect()
-       console.log("Successfully connected to the redis")
-       console.log(`Server is running on the PORT number ${PORT}`)
-    }
-    catch(error){
-        console.log("Something went wrong while creating the user " + error)
-    }
-}
-
-
-serverCreation() 
+serverCreation();

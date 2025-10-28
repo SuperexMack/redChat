@@ -2,11 +2,14 @@
 import { useEffect, useRef, useState } from "react";
 import { SpecialText } from "../Components/TextSpecial";
 import { MessageCircleWarning , MessageCircle , Shield, Users, Lock  } from 'lucide-react';
+import { useRouter } from "next/navigation";
 
 export default function() {
 
   const [checkValue,setCheckValue] = useState(false)
   const [userId,setUserId] = useState("")
+
+  const router = useRouter()
 
   const socket = useRef<WebSocket|null>(null)
 
@@ -20,7 +23,8 @@ export default function() {
 
     socket.current.onmessage = ((onmessage)=>{
       let value = JSON.parse(onmessage.data)
-      alert("Your room name is " + value.payload.roomId)
+      let roomIdd = value.payload.roomId
+      router.push(`/chatting/${roomIdd}`)
     })
 
   },[])
