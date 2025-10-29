@@ -6,6 +6,8 @@ import dotenv from "dotenv";
 import { createClient } from "redis";
 import randomstring from "randomstring";
 import WebSocket, { WebSocketServer } from "ws";
+import cors from "cors"
+import users from "./Controllers/user.js"
 const app = express();
 const httpserver = app.listen(9000);
 dotenv.config();
@@ -27,6 +29,10 @@ let rooms = {};
 let usersMap = new Map();
 
 app.use(express.json());
+
+app.use(cors())
+
+app.use("/v1/googleAuth",users)
 
 wss.on("connection", (ws) => {
   ws.on("message", async (userValue) => {
