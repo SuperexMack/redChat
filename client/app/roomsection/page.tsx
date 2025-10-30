@@ -3,6 +3,11 @@ import { useEffect, useRef, useState } from "react";
 import { SpecialText } from "../Components/TextSpecial";
 import { MessageCircleWarning , MessageCircle , Shield, Users, Lock  } from 'lucide-react';
 import { useRouter } from "next/navigation";
+import { jwtDecode } from "jwt-decode";
+
+interface userIdInterface{
+  userId : string
+}
 
 export default function() {
 
@@ -13,9 +18,21 @@ export default function() {
 
   const socket = useRef<WebSocket|null>(null)
 
+  useEffect(()=>{
+   const token = localStorage.getItem("Authorization")
+   if(token){
+    let getTokenValue = jwtDecode<userIdInterface>(token)
+    setUserId(getTokenValue.userId)
+   }
+  },[])
+
 
   useEffect(()=>{
-    socket.current = new WebSocket("ws://localhost:9000")
+    if(!userId) return
+
+    let token = localStorage.getItem("Authorization")
+    
+    socket.current = new WebSocket(`ws://localhost:9000?token=${token}`)
 
     socket.current.onopen = ()=>{
       alert("Connection is established")
@@ -27,7 +44,7 @@ export default function() {
       router.push(`/chatting/${roomIdd}`)
     })
 
-  },[])
+  },[userId])
 
   const donecheck = ()=>{
     setCheckValue(!checkValue)
@@ -116,9 +133,6 @@ export default function() {
 
         </div>
 
-        <div className="w-full h-auto p-2">
-          <input className="border-2 border-black" onChange={(e)=>setUserId(e.target.value)} placeholder="Enter userid"></input>
-        </div>
 
         <div className="w-full h-auto p-3 flex items-center justify-center">
 

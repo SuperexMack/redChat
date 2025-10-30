@@ -22,6 +22,7 @@ const checkAuth = async(token)=>{
 
     if (!res.data.email_verified) throw new Error("Email not verified");
 
+    console.log("done " + res.data)
     return res.data;
   }
   catch(error){
@@ -36,11 +37,7 @@ router.post("/googleauth/user" , async(req,res)=>{
        console.log("try ke aandar first part")
        let getterData = await checkAuth(idToken)
 
-       // Checking the user 
-
-      if(getterData.aud !== googleAud){
-        return res.json({msg:"Unable to login the user"})
-      }
+      console.log("username is :" + getterData.name)
 
        let findUser = await prisma.user.findFirst({
         where:{
@@ -72,7 +69,7 @@ router.post("/googleauth/user" , async(req,res)=>{
        
     }
     catch(error){
-        console.log("bda wala error")
+        console.log("bda wala error" + error)
         return res.json({msg:"Something went wrong while verifying the user " + error})
     }
 })

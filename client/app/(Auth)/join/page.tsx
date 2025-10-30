@@ -9,12 +9,12 @@ export default function () {
 
   const [loading,setLoading] = useState(false)
 
-  const Signup = async(credentialsResponse:any) => {
+  const Signup = async(credentialResponse:any) => {
     try {
       setLoading(true)
-      const idToken = credentialsResponse.credential;
+      const idToken = credentialResponse.credential;
 
-      await axios.post("http://localhost:8080/v1/authuser/googleauth/user", {
+      await axios.post("http://localhost:9000/v1/googleAuth/googleauth/user", {
         idToken,
       })
       .then((response)=>{

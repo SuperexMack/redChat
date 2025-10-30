@@ -21,11 +21,12 @@ export default function RootLayout({
       <body
         className={`antialiased`}
       >
-      <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_PUBLIC_KEY || ""}>
+     
       <Navbar></Navbar>
+       <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ""}>
         {children}
-      <Footer></Footer>
       </GoogleOAuthProvider>
+      <Footer></Footer>
       </body>
     </html>
   );

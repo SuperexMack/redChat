@@ -8,11 +8,15 @@ import randomstring from "randomstring";
 import WebSocket, { WebSocketServer } from "ws";
 import cors from "cors"
 import users from "./Controllers/user.js"
+import url from "url"
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient()
 const app = express();
 const httpserver = app.listen(9000);
 dotenv.config();
 
 const PORT = process.env.PORT;
+const JWT_SECRET = process.env.JWT_SECRET
 
 const client = createClient();
 
@@ -34,7 +38,27 @@ app.use(cors())
 
 app.use("/v1/googleAuth",users)
 
-wss.on("connection", (ws) => {
+wss.on("connection", (ws,req) => {
+
+  const query = url.parse(req.url)
+  const token = query.token
+
+  if (!token) {
+    ws.close(4001, "Unauthorized");
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    if(!decoded.userId){
+      return
+    }
+  } 
+  catch (err) {
+    ws.close(4002, "Invalid token");
+  }
+
+
   ws.on("message", async (userValue) => {
     console.log("Connected to the server");
     let message = JSON.parse(userValue);
@@ -42,7 +66,7 @@ wss.on("connection", (ws) => {
     let roomId = message.roomId;
     let userId = message.userId;
 
-    if (myMessage === "JOIN_ROOM") {
+    if(myMessage === "JOIN_ROOM") {
       usersMap.set(userId, ws);
 
       try {
@@ -95,7 +119,8 @@ wss.on("connection", (ws) => {
             `Paired ${first_user} and ${second_user} into room ${roomId}`
           );
         }
-      } catch (error) {
+      }
+      catch (error) {
         console.log(
           `Something went wrong while adding the users to the queue` + error
         );
@@ -105,11 +130,11 @@ wss.on("connection", (ws) => {
     else if (myMessage === "SENDMESSAGE") {
       let textData = message.textbyuser;
       console.log("message is " + textData + "by userid " + userId);
-      if (rooms[roomId]) {
+      if(rooms[roomId]){
         console.log("aandar to aa gye guru");
         rooms[roomId].forEach((userIdInRoom) => {
           const userSocket = usersMap.get(userIdInRoom);
-          if (userSocket && userSocket.readyState === WebSocket.OPEN) {
+          if(userSocket && userSocket.readyState === WebSocket.OPEN){
             console.log("message is sending")
             userSocket.send(JSON.stringify({msg: myMessage,roomId,userId,textbyuser: textData,}))
           }

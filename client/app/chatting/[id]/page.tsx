@@ -2,6 +2,12 @@
 
 import { useEffect, useRef, useState } from "react"
 import { useParams } from "next/navigation"
+import { jwtDecode } from "jwt-decode";
+
+interface userIdInterface{
+  userId : string
+}
+
 
 export default function(){
 
@@ -15,10 +21,21 @@ export default function(){
   const {id} = useParams()
 
   useEffect(()=>{
+     const token = localStorage.getItem("Authorization")
+     if(token){
+      let getTokenValue = jwtDecode<userIdInterface>(token)
+      setUserId(getTokenValue.userId)
+     }
+    },[])
+  
+
+  useEffect(()=>{
 
     if (!userId) return;
 
-    socket.current = new WebSocket("ws://localhost:9000")
+    const token = localStorage.getItem("Authorization")
+
+    socket.current = new WebSocket(`ws://localhost:9000?token=${token}`)
     
     socket.current.onopen = ()=>{
       alert("connection established")
@@ -37,11 +54,6 @@ export default function(){
   },[userId])
 
 
-  //  const allMessage = [["This is rahul",1] , 
-  //  ["hi Rahul this side kunal",2],
-  //  ["mai changa veere" , 1],
-  //  ["mai to user 2 hun",2],
-  //  ["user 2 hai smart",2], ["aacha beta",1]]
 
    const sendMessage = ()=>{
      if(socket.current) socket.current.send(JSON.stringify({msg:"SENDMESSAGE",roomId:id,userId:userId,textbyuser:message}))
@@ -69,7 +81,6 @@ export default function(){
         
         <div className="w-[50%] flex flex-col h-auto">
           <input onChange={(e)=>setMessage(e.target.value)} className="w-full border-2 border-black p-2 mt-3" placeholder="Hello Bruh how are you??"></input>
-          <input onChange={(e)=>setUserId(e.target.value)} className="w-full border-2 border-black p-2 mt-3" placeholder="Enter userid"></input>
           <button onClick={sendMessage} className="bg-purple-700 p-2 mt-2 rounded-lg text-[20px] text-white">Send Message.....</button>
         </div>
 

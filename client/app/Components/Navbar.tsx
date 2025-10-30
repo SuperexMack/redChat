@@ -61,6 +61,7 @@ export function Navbar(){
           </div>
 
         </div>
+        <ToastContainer></ToastContainer>
         </>
     )
 }
