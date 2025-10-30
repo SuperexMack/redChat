@@ -30,7 +30,9 @@ router.post("/googleauth/user" , async(req,res)=>{
     try{
        console.log("try ke aandar first part")
        let getterData = await checkAuth(idToken)
-       
+       if(getterData.aud !== googleAud){
+        return res.json({msg:"Unable to login the user"})
+       }
        console.log("getter data is " + JSON.stringify(getterData))
 
       console.log("username is :" + getterData.name)

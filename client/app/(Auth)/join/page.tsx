@@ -4,10 +4,13 @@ import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import { useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
+import { useRouter } from "next/navigation";
 
 export default function () {
 
   const [loading,setLoading] = useState(false)
+
+  const router = useRouter()
 
   const Signup = async(credentialResponse:any) => {
     try {
@@ -20,6 +23,7 @@ export default function () {
       .then((response)=>{
         setLoading(false)
         toast.success(response.data.msg)
+        setTimeout(()=>router.push("/"),2000)
         localStorage.setItem("Authorization" , "Bearer " + response.data.token)
       })
       .catch((error)=>{
@@ -68,7 +72,7 @@ export default function () {
             />
           </div>
 
-          <h1 className="text-center mt-[40px] font-medium">Already have a Account? Login</h1>
+          <h1 className="text-center mt-[40px] font-medium">Join Via Google Auth</h1>
 
         </div>
       </div>
