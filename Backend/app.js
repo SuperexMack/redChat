@@ -9,7 +9,9 @@ import WebSocket, { WebSocketServer } from "ws";
 import cors from "cors"
 import users from "./Controllers/user.js"
 import url from "url"
+import querystring from "querystring";
 import { PrismaClient } from "@prisma/client";
+import jwt from "jsonwebtoken"
 const prisma = new PrismaClient()
 const app = express();
 const httpserver = app.listen(9000);
@@ -17,6 +19,7 @@ dotenv.config();
 
 const PORT = process.env.PORT;
 const JWT_SECRET = process.env.JWT_SECRET
+console.log(JWT_SECRET)
 
 const client = createClient();
 
@@ -34,14 +37,23 @@ let usersMap = new Map();
 
 app.use(express.json());
 
-app.use(cors())
+app.use(cors({
+    origin:"http://localhost:3000",
+    methods:["GET","POST"]
+}))
 
 app.use("/v1/googleAuth",users)
 
 wss.on("connection", (ws,req) => {
 
-  const query = url.parse(req.url)
-  const token = query.token
+  const parsedUrl = url.parse(req.url);
+  const queryParams = querystring.parse(parsedUrl.query);
+  const token = queryParams.token;
+  
+  console.log("Token value is " + token)
+
+  console.log("Incoming connection:", req.url);
+  console.log("Extracted token:", token);
 
   if (!token) {
     ws.close(4001, "Unauthorized");
@@ -50,12 +62,14 @@ wss.on("connection", (ws,req) => {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    if(!decoded.userId){
-      return
+    if (!decoded.userId) {
+      ws.close(4003, "Invalid payload");
+      return;
     }
-  } 
-  catch (err) {
+  } catch (err) {
+    console.log("JWT verification failed:", err);
     ws.close(4002, "Invalid token");
+    return;
   }
 
 
@@ -65,8 +79,11 @@ wss.on("connection", (ws,req) => {
     let myMessage = message.msg;
     let roomId = message.roomId;
     let userId = message.userId;
+    
+    console.log("user id is :" + userId)
 
     if(myMessage === "JOIN_ROOM") {
+      console.log("Joined the room")
       usersMap.set(userId, ws);
 
       try {
@@ -75,12 +92,8 @@ wss.on("connection", (ws,req) => {
 
         let setInsertion = await client.sIsMember(setKey, userId);
 
-        if (setInsertion)
-          return res.json({ msg: "You are already inside the channel" });
-        else {
-          await client.sAdd(setKey, userId);
-          await client.rPush(lKey, userId);
-        }
+        await client.sAdd(setKey, userId);
+        await client.rPush(lKey, userId);
 
         let length_of_list = await client.lLen(lKey);
 
@@ -102,6 +115,8 @@ wss.on("connection", (ws,req) => {
             roomId,
             peers: [first_user, second_user],
           };
+
+          console.log(JSON.stringify(payload))
 
           if (ws1 && ws1.readyState === WebSocket.OPEN) {
             ws1.send(

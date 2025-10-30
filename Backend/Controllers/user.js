@@ -16,12 +16,6 @@ const checkAuth = async(token)=>{
   try{
   const res = await axios.get(`https://oauth2.googleapis.com/tokeninfo?id_token=${token}`)
   
-    if (res.data.aud !== googleAud) throw new Error("Invalid Action");
-
-    if (res.data.iss !== "accounts.google.com" && res.data.iss !== "https://accounts.google.com") throw new Error("Invalid issuer");
-
-    if (!res.data.email_verified) throw new Error("Email not verified");
-
     console.log("done " + res.data)
     return res.data;
   }
@@ -36,6 +30,8 @@ router.post("/googleauth/user" , async(req,res)=>{
     try{
        console.log("try ke aandar first part")
        let getterData = await checkAuth(idToken)
+       
+       console.log("getter data is " + JSON.stringify(getterData))
 
       console.log("username is :" + getterData.name)
 
@@ -49,6 +45,7 @@ router.post("/googleauth/user" , async(req,res)=>{
          let userId = findUser.id
          let token = jwt.sign({userId},JWT_SECRET)
          console.log("The token is " + token)
+         console.log("Welcome back")
          return res.json({msg:"Welcome to the collab lesgooo...",token})
        }
 
@@ -63,6 +60,7 @@ router.post("/googleauth/user" , async(req,res)=>{
        if(userData){
          let userId = userData.id
          let token = jwt.sign({userId},JWT_SECRET)
+         console.log("Welcome first time")
          console.log("The token is " + token)
          return res.json({msg:"Welcome to the collab lesgooo...",token})
        }

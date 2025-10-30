@@ -33,7 +33,9 @@ export default function(){
 
     if (!userId) return;
 
-    const token = localStorage.getItem("Authorization")
+    let filterToken = localStorage.getItem("Authorization")
+
+    let token = filterToken?.split(" ")[1]
 
     socket.current = new WebSocket(`ws://localhost:9000?token=${token}`)
     
