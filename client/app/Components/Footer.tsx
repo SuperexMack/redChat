@@ -4,7 +4,7 @@ import Link from "next/link"
 export default function Footer({myref}:any){
     return(
         <>
-        <div ref={myref} className="w-full bg-black hover:cursor-pointer h-auto p-3 mt-[300px] z-40 flex flex-col items-center">
+        <div ref={myref} className="w-full bg-black hover:cursor-pointer h-auto p-3  z-40 flex flex-col items-center">
             <div className="md:w-[90%] w-full h-[90%] mt-6 flex justify-around md:flex flex-wrap">
 
              

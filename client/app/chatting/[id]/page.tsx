@@ -58,7 +58,10 @@ export default function(){
 
 
    const sendMessage = ()=>{
-     if(socket.current) socket.current.send(JSON.stringify({msg:"SENDMESSAGE",roomId:id,userId:userId,textbyuser:message}))
+     if(socket.current){
+      socket.current.send(JSON.stringify({msg:"SENDMESSAGE",roomId:id,userId:userId,textbyuser:message}))
+      setMessage("")
+     }
    }
 
 
@@ -82,7 +85,7 @@ export default function(){
         </div>
         
         <div className="w-[50%] flex flex-col h-auto">
-          <input onChange={(e)=>setMessage(e.target.value)} className="w-full border-2 border-black p-2 mt-3" placeholder="Hello Bruh how are you??"></input>
+          <input value={message} onChange={(e)=>setMessage(e.target.value)} className="w-full border-2 border-black p-2 mt-3" placeholder="Hello Bruh how are you??"></input>
           <button onClick={sendMessage} className="bg-purple-700 p-2 mt-2 rounded-lg text-[20px] text-white">Send Message.....</button>
         </div>
 

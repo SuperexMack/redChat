@@ -9,6 +9,7 @@ import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from 'react-toastify';
+import { Menu } from 'lucide-react';
 
 interface useridinfo{
   userId:string
@@ -18,6 +19,7 @@ interface useridinfo{
 export function Navbar(){
 
   const [userlogin,setUserlogin] = useState(false)
+  const [clicked,setClicked] = useState(false)
 
   const router = useRouter()
 
@@ -36,31 +38,65 @@ export function Navbar(){
     }
   }
 
+  const clickedBurger = ()=>{
+    setClicked(!clicked)
+  }
+
 
     return(
         <>
-        <div className="h-[80px] flex items-center w-full bg-black sticky top-0 z-50">
+        <div className="h-[80px] overflow-hidden flex items-center w-full bg-black sticky top-0 z-50">
           
-          <div className="absolute left-[10%]">
-            <p className="navText text-[40px] font-bold text-white">RedChat</p>
+          <div className="absolute left-[5%] sm:left-[8%] md:left-[10%]">
+            <p className="navText text-[25px] sm:text-[30px] md:text-[38px] font-bold text-white">RedChat</p>
           </div>
 
           <div className="absolute right-[10%] flex space-x-16">
-           <Link className="text-[20px] text-white font-bold" href={"https://github.com/SuperexMack/redChat"}><Github></Github><span>Github</span></Link>
+           <Link className="text-[20px] hidden md:flex text-white font-bold" href={"https://github.com/SuperexMack/redChat"}><Github></Github><span>Github</span></Link>
+          
            {userlogin?(
 
             <>
-              <button onClick={LogoutUser} className="text-[20px] text-white font-bold"><LogOut></LogOut><span>LogOut</span></button>
+              <button onClick={LogoutUser} className="text-[20px] hidden md:flex text-white font-bold"><LogOut></LogOut><span>LogOut</span></button>
             </>
 
            ):(
             <>
-             <Link className="text-[20px] text-white font-bold" href={"/"}><LogIn></LogIn><span>Join</span></Link>
+             <Link className="text-[20px] hidden md:flex text-white font-bold" href={"/join"}><LogIn></LogIn><span>Join</span></Link>
             </>
            )}
+
+            <Menu onClick={clickedBurger} className="text-white mt-2 md:hidden"></Menu>
+
+            
+
           </div>
 
+          
+
         </div>
+        {clicked ? (
+
+              <div className="flex flex-col items-center space-y-4 h-auto p-2 bg-black w-full mt-[100px">
+                <Link className="text-[20px]  text-white font-bold" href={"https://github.com/SuperexMack/redChat"}><Github></Github><span>Github</span></Link>
+          
+                {userlogin?(
+
+                    <>
+                        <button onClick={LogoutUser} className="text-[20px]  text-white font-bold"><LogOut></LogOut><span>LogOut</span></button>
+                     </>
+
+                    ):(
+                    <>
+                      <Link className="text-[20px]  text-white font-bold" href={"/join"}><LogIn></LogIn><span>Join</span></Link>
+                    </>
+                )}
+              </div>
+
+            ):(
+              <>
+              </>
+            )}
         <ToastContainer></ToastContainer>
         </>
     )
