@@ -4,6 +4,7 @@ import { SpecialText } from "../Components/TextSpecial";
 import { MessageCircleWarning , MessageCircle , Shield, Users, Lock  } from 'lucide-react';
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
+import { ToastContainer, toast } from 'react-toastify';
 
 interface userIdInterface{
   userId : string
@@ -37,7 +38,7 @@ export default function() {
     socket.current = new WebSocket(`ws://localhost:9000?token=${token}`)
 
     socket.current.onopen = ()=>{
-      alert("Connection is established")
+      toast.success("Connection is established")
     }
 
     socket.current.onmessage = ((onmessage)=>{
@@ -55,15 +56,15 @@ export default function() {
 
   const joinRoom = ()=>{
     if(checkValue == false){
-      alert("Check all the term and condition first")
+      toast.error("Check all the term and condition first")
       return
     }
     if(socket.current){
       socket.current.send(JSON.stringify({userId:userId,msg:"JOIN_ROOM"}))
-      alert("Request to join the room is send")
+      toast.success("Request to join the room is send")
     }
     else{
-      alert("Unable to send the request")
+      toast.error("Unable to send the request please Login, in case u already did that so wait some moment")
     }
   }
 
@@ -155,6 +156,7 @@ export default function() {
        </div>
 
       </div>
+      <ToastContainer></ToastContainer>
     </>
   );
 }

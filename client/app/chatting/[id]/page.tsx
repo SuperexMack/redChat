@@ -20,6 +20,14 @@ export default function(){
 
   const {id} = useParams()
 
+
+  // User Validating Stuff
+
+  useEffect(()=>{
+    
+  },[])
+
+
   useEffect(()=>{
      const token = localStorage.getItem("Authorization")
      if(token){
