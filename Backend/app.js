@@ -18,9 +18,18 @@ dotenv.config();
 
 const PORT = process.env.PORT;
 const JWT_SECRET = process.env.JWT_SECRET
+const password_redis = process.env.password_redis
+const host_redis = process.env.host
 console.log(JWT_SECRET)
 
-const client = createClient();
+const client = createClient({
+    username: 'userRedis',
+    password: password_redis,
+    socket: {
+        host: host_redis,
+        port: 16685
+    }
+});
 
 client.on("error", (error) => {
   console.log(
