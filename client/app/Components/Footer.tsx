@@ -14,7 +14,7 @@ export default function Footer({myref}:any){
                   <div className="md:w-[70%] w-full">
 
                   <p className="text-slate-100 ">
-                    RedChat is a browser extension that makes understanding online videos easier and more effective by offering smart features via Ai
+                    RedChat is an anonymous chat platform inspired by Omegle, with a custom twist. Users register, accept terms, and are randomly matched with someone online anywhere in the world.
                   </p>
 
                   </div>

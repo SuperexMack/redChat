@@ -10,9 +10,8 @@ import cors from "cors"
 import users from "./Controllers/user.js"
 import url from "url"
 import querystring from "querystring";
-import { PrismaClient } from "@prisma/client";
+// import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken"
-const prisma = new PrismaClient()
 const app = express();
 const httpserver = app.listen(9000);
 dotenv.config();

@@ -21,7 +21,7 @@ export default function() {
   useEffect(()=>{
    const token = localStorage.getItem("Authorization")
    if(token){
-    const getTokenValue = jwtDecode<userIdInterface>(token)
+    let getTokenValue = jwtDecode<userIdInterface>(token)
     setUserId(getTokenValue.userId)
    }
   },[])
@@ -30,9 +30,9 @@ export default function() {
   useEffect(()=>{
     if(!userId) return
 
-    const filterToken = localStorage.getItem("Authorization")
+    let filterToken = localStorage.getItem("Authorization")
 
-    const token = filterToken?.split(" ")[1]
+    let token = filterToken?.split(" ")[1]
     
     socket.current = new WebSocket(`ws://localhost:9000?token=${token}`)
 
@@ -41,8 +41,8 @@ export default function() {
     }
 
     socket.current.onmessage = ((onmessage)=>{
-      const value = JSON.parse(onmessage.data)
-      const roomIdd = value.payload.roomId
+      let value = JSON.parse(onmessage.data)
+      let roomIdd = value.payload.roomId
       router.push(`/chatting/${roomIdd}`)
     })
 
@@ -54,7 +54,10 @@ export default function() {
   }
 
   const joinRoom = ()=>{
-    if(checkValue == false) alert("Check all the term and condition first")
+    if(checkValue == false){
+      alert("Check all the term and condition first")
+      return
+    }
     if(socket.current){
       socket.current.send(JSON.stringify({userId:userId,msg:"JOIN_ROOM"}))
       alert("Request to join the room is send")
@@ -106,7 +109,7 @@ export default function() {
         <p className="text-center main-landing-text border border-slate-200 p-3 text-[23px] font-medium rounded-2xl mt-[20px]">
           Welcome! to Redchat so this is the platform where
           you can talk to the strangers without knowing 
-          their real identity and infact you dont need
+          their real identity and infact you don't need
           to worry about your own identity.
         </p>
 
