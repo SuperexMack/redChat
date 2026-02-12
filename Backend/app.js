@@ -23,7 +23,7 @@ const host_redis = process.env.host
 console.log(JWT_SECRET)
 
 const client = createClient({
-    username: 'userRedis',
+    username: 'default',
     password: password_redis,
     socket: {
         host: host_redis,
@@ -172,7 +172,7 @@ wss.on("connection", (ws,req) => {
 });
 
 app.get("/", (req, res) => {
-  return res.json({ msg: "Welcome to the red chat" });
+  return res.json({ msg: "Welcome to the red chat v1" });
 });
 
 app.get("/getqueueValues", async (req, res) => {
