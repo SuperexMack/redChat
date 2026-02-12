@@ -17,7 +17,7 @@ export default function () {
       setLoading(true)
       const idToken = credentialResponse.credential;
 
-      await axios.post("http://localhost:9000/v1/googleAuth/googleauth/user", {
+      await axios.post("https://redchatwebsockets.onrender.com/v1/googleAuth/googleauth/user", {
         idToken,
       })
       .then((response)=>{

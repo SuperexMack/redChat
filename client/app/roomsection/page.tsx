@@ -35,7 +35,7 @@ export default function() {
 
     let token = filterToken?.split(" ")[1]
     
-    socket.current = new WebSocket(`ws://localhost:9000?token=${token}`)
+    socket.current = new WebSocket(`wss://redchatwebsockets.onrender.com?token=${token}`)
 
     socket.current.onopen = ()=>{
       toast.success("Connection is established")
