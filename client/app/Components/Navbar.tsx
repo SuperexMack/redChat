@@ -45,10 +45,10 @@ export function Navbar(){
 
     return(
         <>
-        <div className="h-[80px] overflow-hidden flex items-center w-full bg-black sticky top-0 z-50">
+        <div className="h-[80px] overflow-hidden flex items-center w-full bg-black sticky top-0 z-30">
           
           <div className="absolute left-[5%] sm:left-[8%] md:left-[10%]">
-            <p className="navText text-[25px] sm:text-[30px] md:text-[38px] font-bold text-white">RedChat</p>
+            <p className="navText text-[25px] sm:text-[30px] md:text-[30px] font-bold text-white">RedChat</p>
           </div>
 
           <div className="absolute right-[10%] flex space-x-16">
@@ -77,7 +77,7 @@ export function Navbar(){
         </div>
         {clicked ? (
 
-              <div className="flex flex-col items-center space-y-4 h-auto p-2 bg-black w-full mt-[100px">
+              <div className="flex flex-col items-center space-y-4 h-auto p-2 bg-red-500 w-full mt-[100px z-40">
                 <Link className="text-[20px]  text-white font-bold" href={"https://github.com/SuperexMack/redChat"}><Github></Github><span>Github</span></Link>
           
                 {userlogin?(

@@ -1,55 +1,28 @@
 "use client";
 import { ThreeDMarquee } from "@/components/ui/3d-marquee";
-import first from "../../photofoll/firstt.jpg"
-import second from "../../photofoll/secondd.jpeg"
-import third from "../../photofoll/thirdd.jpg"
-import fourth from "../../photofoll/fourthh.jpg"
-import fifth from "../../photofoll/fifthh.jpeg"
-import sixth from "../../photofoll/sixxth.webp"
-import seventh from "../../photofoll/seventhh.jpeg"
-import eigth from "../../photofoll/eigth.jpeg"
-import ninth from "../../photofoll/ninthh.jpg"
 import { useRouter } from "next/navigation";
 
 export function ThreeDMarqueeDemoSecond() {
   const images = [
-    first.src,
-    second.src,
-    third.src,
-    fourth.src,
-    fifth.src,
-    sixth.src,
-    seventh.src,
-    eigth.src,
-    ninth.src,
-    first.src,
-    second.src,
-    third.src,
-    fourth.src,
-    fifth.src,
-    sixth.src,
-    seventh.src,
-    eigth.src,
-    ninth.src,
-    first.src,
-    second.src,
-    third.src,
-    fourth.src,
-    fifth.src,
-    sixth.src,
-    seventh.src,
-    eigth.src,
-    ninth.src,
-    first.src,
-    second.src,
-    third.src,
-    fourth.src,
-    fifth.src,
-    sixth.src,
-    seventh.src,
-    eigth.src,
-    ninth.src,
+    "/firstt.jpg",
+    "/secondd.jpeg",
+    "/thirdd.jpg",
+    "/fourthh.jpg",
+    "/fifthh.jpeg",
+    "/sixxth.webp",
+    "/seventhh.jpeg",
+    "/eigth.jpeg",
+    "/ninthh.jpg",
   ];
+
+  let StorageArray = []
+
+  for(let i = 0;i<images.length;i++){
+    for(let j = 0 ; j<images.length;j++){
+      StorageArray.push(images[j])
+    }
+  }
+
 
   const route = useRouter()
 
@@ -60,7 +33,7 @@ export function ThreeDMarqueeDemoSecond() {
 
 
   return (
-    <div className="relative mx-auto my-10 bg-black flex h-screen w-full flex-col items-center justify-center overflow-hidden rounded-3xl">
+    <div className="relative mx-auto my-10 bg-black z-10 flex h-screen w-full flex-col items-center justify-center overflow-hidden rounded-3xl">
       <h2 className="relative main-landing-text z-20 mx-auto md:w-[50%] text-center text-[40px]  md:text-[60px] font-bold text-balance text-white">
         Feeling <span className="relative z-20 inline-block rounded-xl bg-blue-500/40 px-4 py-1 text-white underline decoration-sky-500 decoration-[6px] underline-offset-[16px] backdrop-blur-sm">Boredom</span>
         Today ?
@@ -85,7 +58,7 @@ export function ThreeDMarqueeDemoSecond() {
       <div className="absolute inset-0 z-10 h-full w-full bg-black/80 dark:bg-black/40" />
       <ThreeDMarquee
         className="pointer-events-none absolute inset-0 h-full w-full"
-        images={images}
+        images={StorageArray}
       />
     </div>
   );
