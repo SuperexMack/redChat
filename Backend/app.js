@@ -37,8 +37,9 @@ let usersMap = new Map();
 app.use(express.json());
 
 app.use(cors({
-    origin:"http://localhost:3000",
-    methods:["GET","POST"]
+    origin : 'https://redchat-two.vercel.app',
+    methods : ["GET","POST","PUT","DELETE"],
+    allowedHeaders : ["Content-Type","Authorization"]
 }))
 
 app.use("/v1/googleAuth",users)
