@@ -33,7 +33,7 @@ export function ThreeDMarqueeDemoSecond() {
 
 
   return (
-    <div className="relative mx-auto my-10 bg-black z-10 flex h-screen w-full flex-col items-center justify-center overflow-hidden rounded-3xl">
+    <div className="relative mx-auto my-10 bg-black mt-[7rem] flex h-screen w-full flex-col items-center justify-center overflow-hidden rounded-3xl">
       <h2 className="relative main-landing-text z-20 mx-auto md:w-[50%] text-center text-[40px]  md:text-[60px] font-bold text-balance text-white">
         Feeling <span className="relative z-20 inline-block rounded-xl bg-blue-500/40 px-4 py-1 text-white underline decoration-sky-500 decoration-[6px] underline-offset-[16px] backdrop-blur-sm">Boredom</span>
         Today ?

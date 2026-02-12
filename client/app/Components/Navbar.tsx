@@ -1,25 +1,16 @@
 "use client"
-
-import Link from "next/link";
-import { Github } from 'lucide-react';
-import { LogIn } from 'lucide-react';
-import { LogOut } from 'lucide-react';
-import { DoorOpen } from 'lucide-react';
-import { jwtDecode } from "jwt-decode"; 
+import Link from  "next/link"
+import { Github , List, LogIn, LogOut} from 'lucide-react';
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from 'react-toastify';
-import { Menu } from 'lucide-react';
+import { useRouter } from "next/navigation";
+export default function Navbar({feature,works,pricing}:any){
 
-interface useridinfo{
-  userId:string
-}
-
-
-export function Navbar(){
+   
 
   const [userlogin,setUserlogin] = useState(false)
   const [clicked,setClicked] = useState(false)
+  const [touched,setTouched] = useState(false)
 
   const router = useRouter()
 
@@ -38,21 +29,22 @@ export function Navbar(){
     }
   }
 
-  const clickedBurger = ()=>{
-    setClicked(!clicked)
-  }
 
 
-    return(
-        <>
-        <div className="h-[80px] overflow-hidden flex items-center w-full bg-black sticky top-0 z-30">
-          
-          <div className="absolute left-[5%] sm:left-[8%] md:left-[10%]">
-            <p className="navText text-[25px] sm:text-[30px] md:text-[30px] font-bold text-white">RedChat</p>
-          </div>
+   const toogle = ()=>{
+      setTouched(!touched)
+   }
 
-          <div className="absolute right-[10%] flex space-x-16">
-           <Link className="text-[20px] hidden md:flex text-white font-bold" href={"https://github.com/SuperexMack/redChat"}><Github></Github><span>Github</span></Link>
+
+   return(
+     <>
+     <div className="w-full z-50 fixed top-0 h-[80px] bg-black  flex items-center justify-center">
+        <div className="absolute left-[10%] flex items-center justify-center space-x-2">
+            <Link href={"/"}><h1 className="md:text-[30px] sm:text-[25px] text-[20px] text-white navText font-bold" >RedChat</h1></Link>
+	      </div>
+
+	<div className="flex  max-[1000px]:hidden justify-center items-center space-x-5">
+	   <Link className="text-[20px] hidden md:flex text-white font-bold" href={"https://github.com/SuperexMack/redChat"}><Github></Github><span>Github</span></Link>
           
            {userlogin?(
 
@@ -66,38 +58,45 @@ export function Navbar(){
             </>
            )}
 
-            <Menu onClick={clickedBurger} className="text-white mt-2 md:hidden"></Menu>
+	</div>
 
-            
+   <div className="absolute min-[1000px]:hidden right-[10%]">
+       <List onClick={toogle} className="text-white h-[30px] w-[30px]"></List>
+   </div>
 
+     </div>
+
+     {touched?(
+       <>
+      <div className=" fixed top-[80px] h-auto w-full bg-black flex flex-col items-center space-y-4 py-6 z-40 shadow-lg">
+          
+          <div className="flex flex-col items-center space-y-4">
+
+           <Link className="text-[20px] md:flex text-white font-bold" href={"https://github.com/SuperexMack/redChat"}><Github></Github></Link>
+           <h1 className="text-white text-[20px] font-bold">Github</h1>
+          
           </div>
 
-          
+           {userlogin?(
 
-        </div>
-        {clicked ? (
+            <>
+              <button onClick={LogoutUser} className="text-[20px] md:flex text-white font-bold"><LogOut></LogOut><span>LogOut</span></button>
+            </>
 
-              <div className="flex flex-col items-center space-y-4 h-auto p-2 bg-red-500 w-full mt-[100px z-40">
-                <Link className="text-[20px]  text-white font-bold" href={"https://github.com/SuperexMack/redChat"}><Github></Github><span>Github</span></Link>
-          
-                {userlogin?(
+           ):(
+            <>
+             <Link className="text-[20px] md:flex text-white font-bold" href={"/join"}><LogIn></LogIn><span>Join</span></Link>
+            </>
+           )}
 
-                    <>
-                        <button onClick={LogoutUser} className="text-[20px]  text-white font-bold"><LogOut></LogOut><span>LogOut</span></button>
-                     </>
+      </div>
+       </>
+     ):(
+      <>
+      </>
+     )}
 
-                    ):(
-                    <>
-                      <Link className="text-[20px]  text-white font-bold" href={"/join"}><LogIn></LogIn><span>Join</span></Link>
-                    </>
-                )}
-              </div>
-
-            ):(
-              <>
-              </>
-            )}
-        <ToastContainer></ToastContainer>
-        </>
-    )
+   <ToastContainer></ToastContainer>
+     </>
+   )
 }
