@@ -4,41 +4,48 @@ import dotenv from "dotenv"
 import axios from "axios"
 import jwt from "jsonwebtoken"
 import { prisma } from "../PrismaLab/prisma.js"
+import { OAuth2Client } from "google-auth-library"
 dotenv.config()
 
 const JWT_SECRET = process.env.JWT_SECRET
-const googleAud = process.env.GOOGLE_AUD
+const googleClientID = process.env.GOOGLE_AUD
 
 console.log("The value of JWT secret is " + JWT_SECRET)
 
-const checkAuth = async(token)=>{
-  try{
-  const res = await axios.get(`https://oauth2.googleapis.com/tokeninfo?id_token=${token}`)
-  
-    console.log("done " + res.data)
-    return res.data;
-  }
-  catch(error){
-    return error
-  }
-}
+const client = new OAuth2Client(googleClientID)
 
 router.post("/googleauth/user" , async(req,res)=>{
     console.log("done")
     const {idToken} = req.body
+    if (!idToken) {
+        return res.status(400).json({ msg: "ID token missing" })
+    }
+
     try{
        console.log("try ke aandar first part")
-       let getterData = await checkAuth(idToken)
-      //  if(getterData.aud !== googleAud){
-      //   return res.json({msg:"Unable to login the user"})
-      //  }
-       console.log("getter data is " + JSON.stringify(getterData))
+       
+       let ticket = await client.verifyIdToken({
+        idToken,
+        audience:googleClientID
+       })
 
-      console.log("username is :" + getterData.name)
+      let payload = ticket.getPayload()
+
+
+      if (!payload.email_verified) {
+        return res.status(401).json({ msg: "Email not verified" })
+      }
+
+      const googleSub = payload.sub
+
+       // Checking the user 
+
+      // console.log("Payload is " + payload)
+
 
        let findUser = await prisma.user.findFirst({
         where:{
-          emailToken:getterData.sub
+          emailToken:googleSub
         }
        })
 
@@ -46,30 +53,28 @@ router.post("/googleauth/user" , async(req,res)=>{
          let userId = findUser.id
          let token = jwt.sign({userId},JWT_SECRET)
          console.log("The token is " + token)
-         console.log("Welcome back")
          return res.json({msg:"Welcome to the collab lesgooo...",token})
        }
 
        let userData = await prisma.user.create({
          data:{
-            userName:getterData.name,
-            email:getterData.email,
-            emailToken:getterData.sub
+            userName:payload.name,
+            email:payload.email,
+            emailToken:googleSub
          }
        })
 
        if(userData){
          let userId = userData.id
          let token = jwt.sign({userId},JWT_SECRET)
-         console.log("Welcome first time")
          console.log("The token is " + token)
          return res.json({msg:"Welcome to the collab lesgooo...",token})
        }
        
     }
     catch(error){
-        console.log("bda wala error" + error)
-        return res.json({msg:"Something went wrong while verifying the user " + error})
+        console.log("bda wala error")
+        return res.json({msg:"Something went wrong while verifying the user "})
     }
 })
 
