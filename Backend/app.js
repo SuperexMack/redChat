@@ -10,7 +10,7 @@ import cors from "cors"
 import users from "./Controllers/user.js"
 import url from "url"
 import querystring from "querystring";
-const rateLimit = require("express-rate-limit")
+import rateLimit from "express-rate-limit"
 // import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken"
 const app = express();
