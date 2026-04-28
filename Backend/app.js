@@ -10,6 +10,7 @@ import cors from "cors"
 import users from "./Controllers/user.js"
 import url from "url"
 import querystring from "querystring";
+const rateLimit = require("express-rate-limit")
 // import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken"
 const app = express();
@@ -21,6 +22,16 @@ const JWT_SECRET = process.env.JWT_SECRET
 const password_redis = process.env.password_redis
 const host_redis = process.env.host
 console.log(JWT_SECRET)
+
+const limiter = rateLimit({
+	windowMs: 1 * 60 * 1000, 
+	limit: 5,
+	standardHeaders: 'draft-8',
+	legacyHeaders: false,
+	ipv6Subnet: 56,
+})
+
+app.use(limiter)
 
 const client = createClient({
     username: 'default',
@@ -44,6 +55,8 @@ let rooms = {};
 let usersMap = new Map();
 
 app.use(express.json());
+
+
 
 app.use(cors({
     origin : 'https://redchat-two.vercel.app',
